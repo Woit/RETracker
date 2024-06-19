@@ -1,34 +1,55 @@
 # RETracker
 
-`RETracker` is a reverse engineering framework for the [Polyend Tracker](https://polyend.com/tracker/) written in Python.
-It is based on unofficial patches that are applied to the vendor's stock firmware.
-These patches introduce a custom USB handler by replacing the Tracker's existing but unused USB RAWHID handler. 
+`RETracker` is a reverse engineering framework for the
+[Polyend Tracker](https://polyend.com/tracker/) written in Python. It is based
+on unofficial patches that are applied to the vendor's stock firmware. These
+patches introduce a custom USB handler by replacing the Tracker's existing but
+unused USB RAWHID handler.
 
 [Watch a video of a text scroller on the Tracker's pads](https://vimeo.com/688140736)
 
-The `RETracker's` custom USB handler introduces new, non-official features to the `Polyend Tracker` that can be controlled from a computer via USB. One of these new features is a custom and working unidirectional file transfer functionality, since the Polyend Tracker's official file transfer functionality was broken and hence has been [removed by Polyend with the introduction of firmware v1.4.0](https://github.com/polyend/TrackerBetaTesting/releases/tag/1.4.0).
-
+The `RETracker's` custom USB handler introduces new, non-official features to
+the `Polyend Tracker` that can be controlled from a computer via USB. One of
+these new features is a custom and working unidirectional file transfer
+functionality, since the Polyend Tracker's official file transfer functionality
+was broken and hence has been
+[removed by Polyend with the introduction of firmware v1.4.0](https://github.com/polyend/TrackerBetaTesting/releases/tag/1.4.0).
 
 ![RETracker screenshot](rsrc/retracker.png)
 
 Once patched, the firmware's new features comprise the following:
-* Reading/dumping of memory
-* Writing/patching of memory
-* Execution of custom code/redirection of control flow
-* Writing files to the tracker's SD card
 
-These features are a solid base for adding further functions dynamically to the `Polyend Tracker`, by assembling position-independend code on the host, transferring it to the Tracker and having the new USB handler execute the freshly implanted code. There are a few intial [demos](polyp/) available that can be transferred dynamically to the device.
+- Reading/dumping of memory
+- Writing/patching of memory
+- Execution of custom code/redirection of control flow
+- Writing files to the tracker's SD card
 
-Adding to that, the memory reading/writing functions allow the USB host to inspect the `Tracker's` memory by creating hex-dumps or by disassembling code in ARM or Thumb mode.
+These features are a solid base for adding further functions dynamically to the
+`Polyend Tracker`, by assembling position-independend code on the host,
+transferring it to the Tracker and having the new USB handler execute the
+freshly implanted code. There are a few intial [demos](polyp/) available that
+can be transferred dynamically to the device.
 
-Finally, the new file transfer function allows arbitrary files, such as firmware updates or `NES` roms to be copied to the Tracker, without having to go through the intended process of swapping the SD card between the `Tracker` and a computer. Currently the only direction supported is *from* the USB host *to* the `Tracker's` SD card, however.
+Adding to that, the memory reading/writing functions allow the USB host to
+inspect the `Tracker's` memory by creating hex-dumps or by disassembling code in
+ARM or Thumb mode.
+
+Finally, the new file transfer function allows arbitrary files, such as firmware
+updates or `NES` roms to be copied to the Tracker, without having to go through
+the intended process of swapping the SD card between the `Tracker` and a
+computer. Currently the only direction supported is *from* the USB host *to* the
+`Tracker's` SD card, however.
 
 HAPPY HACKING!
-## Installation
-First of all, on top of a Python 3 installation, RETracker requires a number of [dependencies](DEPENDENCIES.md) to be installed.
-Please check them out and make sure you have them all installed before you go on.
 
-Once all dependencies are installed, a patched firmware can be created by running [fwtool.py](fwtool.py).
+## Installation
+
+First of all, on top of a Python 3 installation, RETracker requires a number of
+[dependencies](DEPENDENCIES.md) to be installed. Please check them out and make
+sure you have them all installed before you go on.
+
+Once all dependencies are installed, a patched firmware can be created by
+running [fwtool.py](fwtool.py).
 
 ```
 # python fwtool.py
@@ -44,7 +65,9 @@ optional arguments:
   -u, --unpack  unpack Tracker firmware (.ptf) to binary format
   -p, --pack    create Tracker firmware (.ptf) from binary
 ```
+
 Example:
+
 ```
 # python fwtool.py -b ..\PolyendTracker_1.5.0.ptf ..\PolyendTracker_1.5.0_retracker.ptf
 Opening ..\PolyendTracker_1.5.0.ptf
@@ -57,38 +80,60 @@ Applying patch
 Creating output file: ..\PolyendTracker_1.5.0_retracker.ptf
 Done
 ```
-Once a firmware is successfully built, it should be copied to the Tracker's `"/firmware/"` folder on the root of its SD card.
-The firmware image's file name must start with `PolyendTracker_` and end with `.ptf` or otherwise, the Tracker won't find it.
-The firmware flashing procedure is straight forward and doesn't differ from the ordinary process.
+
+Once a firmware is successfully built, it should be copied to the Tracker's
+`"/firmware/"` folder on the root of its SD card. The firmware image's file name
+must start with `PolyendTracker_` and end with `.ptf` or otherwise, the Tracker
+won't find it. The firmware flashing procedure is straight forward and doesn't
+differ from the ordinary process.
 
 On the device
-* press the `config` button
-* go to the `Firmware` menu
-* enter the `Firmware update` sub menu
-* choose the firmware you would like to flash onto the `Polyend Tracker`
 
->ACHTUNG!!!
+- press the `config` button
+- go to the `Firmware` menu
+- enter the `Firmware update` sub menu
+- choose the firmware you would like to flash onto the `Polyend Tracker`
+
+> ACHTUNG!!!
 >
->It is expected for the UI to behave differently when flashing a patched firmware.
-This is probably due to differences in the IntelHex format that `fwtool.py` creates, which hasn't been looked into, yet (simply because it still leads to a successfully flashed firmware).
+> It is expected for the UI to behave differently when flashing a patched
+> firmware. This is probably due to differences in the IntelHex format that
+> `fwtool.py` creates, which hasn't been looked into, yet (simply because it
+> still leads to a successfully flashed firmware).
 >
->Please patiently wait for the update to finish until the device reboots.
-In case something still went wrong, please consult the `Polyend Tracker` user manual, which explains the steps on how to enter the `emergency update procedure`.
+> Please patiently wait for the update to finish until the device reboots. In
+> case something still went wrong, please consult the `Polyend Tracker` user
+> manual, which explains the steps on how to enter the
+> `emergency update procedure`.
 >
->n.b.: I've gone through numerous failed update procedures during development myself and haven't had a single issue with restoring a good firmware using the `emergency update procedure`.
->However, I wouldn't recommend using `RETracker` before having made backups of the Tracker's SD card (projects, samples, ...).
+> n.b.: I've gone through numerous failed update procedures during development
+> myself and haven't had a single issue with restoring a good firmware using the
+> `emergency update procedure`. However, I wouldn't recommend using `RETracker`
+> before having made backups of the Tracker's SD card (projects, samples, ...).
 
 ## Supported Firmware Versions
-RETracker currently supports `Polyend Tracker` in firmware version 1.5.0. There exists a private version for firmware 1.6.0 that has not been released to the public since Polyend entirely removed the code that was used to implement the patches for RETracker on firmware 1.5.0, which made porting them over to the 1.6.0 firmware more difficult.
+
+RETracker currently supports `Polyend Tracker` in firmware version 1.5.0. There
+exists a private version for firmware 1.6.0 that has not been released to the
+public since Polyend entirely removed the code that was used to implement the
+patches for RETracker on firmware 1.5.0, which made porting them over to the
+1.6.0 firmware more difficult.
 
 ## How does it work?
-Polyend Tracker firmware images ship in IntelHex format.
-[fwtool.py](fwtool.py) converts the firmware to its plain binary format, which holds all the firmware's code and data.
-It then applies patches to the converted binary according to information found in [tracker/firmware.py](tracker/firmware.py) before converting the file back to IntelHex format again.
-From there on, the `Polyend Tracker` can be communicated with by plugging it into a USB port of a computer running [retracker.py](retracker.py).
+
+Polyend Tracker firmware images ship in IntelHex format. [fwtool.py](fwtool.py)
+converts the firmware to its plain binary format, which holds all the firmware's
+code and data. It then applies patches to the converted binary according to
+information found in [tracker/firmware.py](tracker/firmware.py) before
+converting the file back to IntelHex format again. From there on, the
+`Polyend Tracker` can be communicated with by plugging it into a USB port of a
+computer running [retracker.py](retracker.py).
 
 ## RETracker Usage
-The main workhorse of this project probably is `retracker.py`, which provides a command line interface to the user.
+
+The main workhorse of this project probably is `retracker.py`, which provides a
+command line interface to the user.
+
 ```
 # python retracker.py -h
 usage: retracker.py [-h] [-b] [-c] [-r ADDRESS SIZE FILE] [-w ADDRESS DATA] [-x ADDRESS SIZE] [-d ADDRESS SIZE]
@@ -125,7 +170,9 @@ Run code in Thumb mode:     retracker.py -e 70100001
 Run code in ARM mode:       retracker.py -e 70100000
 Transfer file to Tracker:   retracker.py -t PolyendTracker_1.5.0.ptf Firmware/PolyendTracker_cstm.ptf
 ```
+
 Examples:
+
 ```
 # python retracker.py -d 0002B99d 100
 Connected to Polyend Tracker
@@ -175,20 +222,28 @@ Dumping 0002B99D-0002BA9D
 0002ba8d  ea 03 03 a9 42 8c f8 b6  30 ec d1 80 f8 b5 e0 30  |....B...0......0|
 ```
 
-Whereas some of the more common command line options allow memory to be written, read and hex-dumped, the more exciting features are probably the `-e` and `-a` options.
-They allow code to be executed on the device.
+Whereas some of the more common command line options allow memory to be written,
+read and hex-dumped, the more exciting features are probably the `-e` and `-a`
+options. They allow code to be executed on the device.
 
-The `-e` option allows existing firmware code to be branched to directly, or custom code after writing it to the device's memory using the `-w` option.
-The lowest bit of an `address` argument passed to the `retracker.py` command line utility specifies whether or not to use Thumb mode (0: ARM mode, 1: Thumb mode).
+The `-e` option allows existing firmware code to be branched to directly, or
+custom code after writing it to the device's memory using the `-w` option. The
+lowest bit of an `address` argument passed to the `retracker.py` command line
+utility specifies whether or not to use Thumb mode (0: ARM mode, 1: Thumb mode).
 
-The `-a` command line argument accepts so called `Polyps`, which are Python modules containing patches for the `Polyend Tracker` in the form of assembly routines and version-specific offsets and data.
+The `-a` command line argument accepts so called `Polyps`, which are Python
+modules containing patches for the `Polyend Tracker` in the form of assembly
+routines and version-specific offsets and data.
 
-Loading any of these modules using the `-a` command line option causes their assembly routines
-* to be assembled on the fly
-* transferred to the connected device
-* executed on the connected device
+Loading any of these modules using the `-a` command line option causes their
+assembly routines
+
+- to be assembled on the fly
+- transferred to the connected device
+- executed on the connected device
 
 Example:
+
 ```
 # python retracker.py -a polyp.scroller
 Connected to Polyend Tracker
@@ -203,31 +258,73 @@ Running code...
 Done
 ```
 
-This does not only allow for convenient and sped-up development of custom code and features, it also does not require new firmware to be flashed onto the `Tracker` for testing new functionality (but a reboot in the worst case).
+This does not only allow for convenient and sped-up development of custom code
+and features, it also does not require new firmware to be flashed onto the
+`Tracker` for testing new functionality (but a reboot in the worst case).
 
-Please have a look at the available modules in the [polyp/](polyp/) folder, which contains a few initial demos that fade the `Tracker's` screen in and out or repurpose its pads as a text-scroller canvas.
+Please have a look at the available modules in the [polyp/](polyp/) folder,
+which contains a few initial demos that fade the `Tracker's` screen in and out
+or repurpose its pads as a text-scroller canvas.
 
 ## Reverse Engineering the Tracker
-The `Polyend Tracker` is believed to be based on a µc similar to the Teensy 3.6 of which [data sheets and other tech info is available here](https://www.pjrc.com/store/teensy36.html).
-Be sure to check out the [MK66FX](https://www.pjrc.com/teensy/K66P144M180SF5RMV2.pdf) manual for a memory map in order to avoid running into device crashes when dumping memory.
 
-The `Tracker` firmware image is in IntelHex format and can be unpacked using [fwtool.py](fwtool.py) or loaded directly by disassemblers supporting the IntelHex format, such as the [IDA Pro disassembler](https://hex-rays.com/ida-pro/ida-disassembler/) and probably others such as [GHIDRA](https://ghidra-sre.org/) or [Binary Ninja](https://binary.ninja/).
-The processor module to choose is ARM / little-endian.
-The firmware should be loaded at address 0. Address/offset 4 is the the reset vector with a pointer to the reset vector handler (start disassembling there).
-Most, if not all of its code runs in Thumb mode.
-I've found address `0x70100000` and above to be a reliable address to plant a `Polyp` into and run its code from there.
+The `Polyend Tracker` is believed to be based on a µc similar to the Teensy 3.6
+of which
+[data sheets and other tech info is available here](https://www.pjrc.com/store/teensy36.html).
+Be sure to check out the
+[MK66FX](https://www.pjrc.com/teensy/K66P144M180SF5RMV2.pdf) manual for a memory
+map in order to avoid running into device crashes when dumping memory.
 
-If you'd like to give firmware development a go, grab a copy of both [Arduino and the Teensyduino addon](https://www.pjrc.com/teensy/td_download.html), build some of the examples and flash the resulting `.hex` files onto the Tracker (be sure to pick `Teensy 3.6` and rename the resulting `.hex` file into something like `PolyendTracker_teensy.ptf`).
-Going back to an original `Polyend Tracker` firmware will be possible anytime using the Tracker's emergency update procedure, since it resides on a separate chip that isn't affected/overwritten by firmware updates.
+The `Tracker` firmware image is in IntelHex format and can be unpacked using
+[fwtool.py](fwtool.py) or loaded directly by disassemblers supporting the
+IntelHex format, such as the
+[IDA Pro disassembler](https://hex-rays.com/ida-pro/ida-disassembler/) and
+probably others such as [GHIDRA](https://ghidra-sre.org/) or
+[Binary Ninja](https://binary.ninja/). The processor module to choose is ARM /
+little-endian. The firmware should be loaded at address 0. Address/offset 4 is
+the the reset vector with a pointer to the reset vector handler (start
+disassembling there). Most, if not all of its code runs in Thumb mode. I've
+found address `0x70100000` and above to be a reliable address to plant a `Polyp`
+into and run its code from there.
+
+If you'd like to give firmware development a go, grab a copy of both
+[Arduino and the Teensyduino addon](https://www.pjrc.com/teensy/td_download.html),
+build some of the examples and flash the resulting `.hex` files onto the Tracker
+(be sure to pick `Teensy 3.6` and rename the resulting `.hex` file into
+something like `PolyendTracker_teensy.ptf`). Going back to an original
+`Polyend Tracker` firmware will be possible anytime using the Tracker's
+emergency update procedure, since it resides on a separate chip that isn't
+affected/overwritten by firmware updates.
 
 ![Teensyduino screenshot](rsrc/teensyduino.jpg)
 
 ## RETracker Wiki
-The RETracker wiki can be found [here](https://github.com/patois/RETracker/wiki).
+
+The RETracker wiki can be found
+[here](https://github.com/patois/RETracker/wiki).
 
 ## Discussions / Forums
-Please [take part in discussions](https://github.com/patois/RETracker/discussions/7) and tell everybody about your experience with RETracker and how you're using it!
+
+Please
+[take part in discussions](https://github.com/patois/RETracker/discussions/7)
+and tell everybody about your experience with RETracker and how you're using it!
+
+## Discussions / Forums
+
+Please
+[take part in discussions](https://github.com/patois/RETracker/discussions/7)
+and tell everybody about your experience with RETracker and how you're using it!
 
 ## Disclaimer
-The author does not take any responsibility for any damage this project may cause to your Polyend Tracker.
-By using RETracker or any information derived, you agree that you are using any of this project's code, data and other information at your own risk.
+
+The author does not take any responsibility for any damage this project may
+cause to your Polyend Tracker. By using RETracker or any information derived,
+you agree that you are using any of this project's code, data and other
+information at your own risk.
+
+## Some useful disassembly commands
+
+```
+python fwtool.py -u firmware_file.ptf unpacked.bin
+r2 -a arm -b 32 -m 0x08000000 -AA unpacked.bin
+```
